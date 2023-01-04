@@ -11,10 +11,10 @@ import "testing"
 // Given I play a game of blackjack
 // When I am dealt my opening hand
 // Then I have two cards
-func TestDealOpeningHand(t *testing.T) {
+func TestDealOpeningHands(t *testing.T) {
 	game := NewGame()
 
-	game.DealOpeningHand()
+	game.DealOpeningHands()
 
 	if len(game.playerDeck) != 2 {
 		t.Errorf("Expected 2 cards in player deck, got %d", len(game.playerDeck))
@@ -37,9 +37,9 @@ func TestHit(t *testing.T) {
 	game := NewGame() // start new game with starting score of 0
 	oldGameScore := game.score
 
-	card := game.Deal()
+	card := game.DealToPlayer()
 
-	if card.values[1]+oldGameScore != game.score {
+	if card.values[1]+oldGameScore != game.playerScore {
 		t.Errorf("Expected score to be %d, got %d", card.values[1]+oldGameScore, game.score)
 	}
 }
@@ -71,7 +71,7 @@ func TestUpdateScoreUnder21(t *testing.T) {
 
 	game.playerDeck = []Card{Card{"Ace", []int{1, 11}}, Card{"10", []int{10}}}
 
-	game.UpdateScore()
+	game.UpdatePlayerScore()
 
 	if game.score != 21 {
 		t.Errorf("Expected score to be 21, got %d", game.score)
@@ -90,7 +90,7 @@ func TestUpdateScoreOver21(t *testing.T) {
 
 	game.playerDeck = []Card{Card{"Ace", []int{1, 11}}, Card{"10", []int{10}}, Card{"2", []int{2}}}
 
-	game.UpdateScore()
+	game.UpdatePlayerScore()
 
 	if game.score != 23 {
 		t.Errorf("Expected score to be 23, got %d", game.score)
@@ -109,7 +109,7 @@ func TestKingAceEquals21Score(t *testing.T) {
 
 	game.playerDeck = []Card{Card{"King", []int{10}}, Card{"Ace", []int{1, 11}}}
 
-	game.UpdateScore()
+	game.UpdatePlayerScore()
 
 	if game.score != 21 {
 		t.Errorf("Expected score to be 21, got %d", game.score)
@@ -124,7 +124,7 @@ func TestKingQueenAceEquals21Score(t *testing.T) {
 
 	game.playerDeck = []Card{Card{"King", []int{10}}, Card{"Queen", []int{10}}, Card{"Ace", []int{1, 11}}}
 
-	game.UpdateScore()
+	game.UpdatePlayerScore()
 
 	if game.score != 21 {
 		t.Errorf("Expected score to be 21, got %d", game.score)
@@ -139,7 +139,7 @@ func TestNineAceAceEquals21Score(t *testing.T) {
 
 	game.playerDeck = []Card{Card{"9", []int{9}}, Card{"Ace", []int{1, 11}}, Card{"Ace", []int{1, 11}}}
 
-	game.UpdateScore()
+	game.UpdatePlayerScore()
 
 	if game.score != 21 {
 		t.Errorf("Expected score to be 21, got %d", game.score)
