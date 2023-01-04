@@ -7,21 +7,25 @@ The business logic for the Blackjack game.
 package blackjack
 
 import (
-	"fmt"
+	"errors"
 	"math/rand"
 )
 
 type Game struct {
 	deck        []Card
 	houseDeck   []Card
-	playerDeck  []Card
-	houseScore  int
-	playerScore int
-	complete    bool
+	PlayerDeck  []Card
+	HouseScore  int
+	PlayerScore int
+	started     bool
+	Complete    bool
+	HouseBust   bool
+	PlayerBust  bool
+	PlayerWon   bool
 }
 
 type Card struct {
-	identifier string
+	Identifier string
 	values     []int // all cards have a single value -- apart from ace which can have an alternative value (1 or 11)
 }
 
@@ -36,13 +40,13 @@ var freshDeck []Card = []Card{
 func NewGame() *Game {
 	game := new(Game)
 
-	game.SetupDecks()
+	game.setupDecks()
 
 	return game
 }
 
 // Setup deck (add 52 (4*13) cards; an ace, 2-10, jack, queen, king for each suit)
-func (game *Game) SetupDecks() {
+func (game *Game) setupDecks() {
 	copy(game.deck, freshDeck)
 
 	// randomly shuffle order of cards in the deck
@@ -52,85 +56,117 @@ func (game *Game) SetupDecks() {
 }
 
 // Deal opening hand (deal two cards from main deck to house & player decks)
-func (game *Game) DealOpeningHands() {
+func (game *Game) DealOpeningHands() error {
+	if game.started || game.Complete {
+		return errors.New("Game is already started/complete")
+	}
+
 	game.DealToPlayer(2)
 	game.DealToHouse(2)
+
+	game.started = true
+
+	return nil
 }
 
 // Deal [quantity] cards to player from what's remaining in the deck
 // Once dealt, remove the card from the main deck
 // RETURNS the dealt cards
-func (game *Game) DealToPlayer(quantity int) []Card {
-	game.playerDeck = append(game.playerDeck, game.deck[:quantity-1]...)
+func (game *Game) DealToPlayer(quantity int) ([]Card, error) {
+	if game.Complete {
+		return nil, errors.New("Game is complete")
+	}
+
+	selectedCards := game.deck[:quantity-1]
+
+	game.PlayerDeck = append(game.PlayerDeck, selectedCards...)
 
 	game.deck = game.deck[quantity:]
 
-	game.UpdatePlayerScore()
+	game.updatePlayerScore()
+
+	return selectedCards, nil
 }
 
 // Deal [quantity] cards to house (dealer) from what's remaining in the deck
 // Once dealt, remove the card from the main deck
 // RETURNS the dealt cards
-func (game *Game) DealToHouse(quantity int) []Card {
-	game.houseDeck = append(game.houseDeck, game.deck[:quantity-1]...)
+func (game *Game) DealToHouse(quantity int) ([]Card, error) {
+	if game.Complete {
+		return nil, errors.New("Game is complete")
+	}
+
+	selectedCards := game.deck[:quantity-1]
+
+	game.houseDeck = append(game.houseDeck, selectedCards...)
 
 	game.deck = game.deck[quantity:]
 
-	game.UpdateHouseScore()
+	game.updateHouseScore()
+
+	return selectedCards, nil
 }
 
 // Update the house's current score (optimum total of all card values)
-func (game *Game) UpdateHouseScore() {
-	game.houseScore = 0
+func (game *Game) updateHouseScore() {
+	game.HouseScore = 0
 	for _, card := range game.houseDeck {
-		bestValue := 0
+		bestValue := card.values[0]
 		for _, value := range card.values {
-			if game.houseScore+value > bestValue && game.houseScore+value <= 21 {
+			if game.HouseScore+value > bestValue && game.HouseScore+value <= 21 {
 				bestValue = value
 			}
 		}
 
-		game.houseScore += bestValue
+		game.HouseScore += bestValue
+	}
+
+	if game.HouseScore > 21 { // house (dealer) is bust
+		game.Complete = true
+		game.HouseBust = true
 	}
 }
 
 // Update the player's current score (optimum total of all card values)
-func (game *Game) UpdatePlayerScore() string {
-	game.playerScore = 0
-	for _, card := range game.playerDeck {
-		bestValue := 0
+func (game *Game) updatePlayerScore() {
+	game.PlayerScore = 0
+	for _, card := range game.PlayerDeck {
+		bestValue := card.values[0]
 		for _, value := range card.values {
-			if game.playerScore+value > bestValue && game.playerScore+value <= 21 {
+			if game.PlayerScore+value > bestValue && game.PlayerScore+value <= 21 {
 				bestValue = value
 			}
 		}
 
-		game.playerScore += bestValue
+		game.PlayerScore += bestValue
 	}
 
-	if game.playerScore > 21 { // player is bust
-		game.complete = true
-		return fmt.Sprintf("Bust! Your score exceeded 21 with %d", game.playerScore)
+	if game.PlayerScore > 21 { // player is bust
+		game.Complete = true
+		game.PlayerBust = true
 	}
 }
 
 // Stand player; take no more cards and compare score with dealer
-// RETURNS the result of the game
-func (game *Game) Stand() string {
-	game.PlayHouseHand()
-
-	game.complete = true
-
-	if game.playerScore > game.houseScore {
-		return fmt.Sprintf("Win! Your final score was %d vs. the dealer (house)'s final score of %d", game.playerScore, game.houseScore)
+func (game *Game) Stand() error {
+	if game.Complete {
+		return errors.New("Game is complete")
 	}
 
-	return fmt.Sprintf("Loss! Your final score was %d vs. the dealer (house)'s final score of %d", game.playerScore, game.houseScore)
+	game.playHouseHand()
+
+	game.Complete = true
+
+	if game.PlayerScore > game.HouseScore {
+		game.PlayerWon = true
+	}
+
+	return nil
 }
 
 // Play the house's hand -- dealer must hit until score is 17 or more
-func (game *Game) PlayHouseHand() {
-	for game.houseScore < 17 {
+func (game *Game) playHouseHand() {
+	for game.HouseScore < 17 {
 		game.DealToHouse(1)
 	}
 }

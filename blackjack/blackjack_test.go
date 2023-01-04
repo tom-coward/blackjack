@@ -16,12 +16,12 @@ func TestDealOpeningHands(t *testing.T) {
 
 	game.DealOpeningHands()
 
-	if len(game.playerDeck) != 2 {
-		t.Errorf("Expected 2 cards in player deck, got %d", len(game.playerDeck))
+	if len(game.PlayerDeck) != 2 {
+		t.Errorf("Expected 2 cards in player deck, got %d", len(game.PlayerDeck))
 	}
 
 	if len(game.houseDeck) != 2 {
-		t.Errorf("Expected 2 cards in house deck, got %d", len(game.playerDeck))
+		t.Errorf("Expected 2 cards in house deck, got %d", len(game.PlayerDeck))
 	}
 
 	if len(game.deck) != 50 {
@@ -35,12 +35,12 @@ func TestDealOpeningHands(t *testing.T) {
 // And my score is updated
 func TestHit(t *testing.T) {
 	game := NewGame() // start new game with starting score of 0
-	oldGameScore := game.score
+	oldGameScore := game.PlayerScore
 
-	card := game.DealToPlayer()
+	cards, _ := game.DealToPlayer(1)
 
-	if card.values[1]+oldGameScore != game.playerScore {
-		t.Errorf("Expected score to be %d, got %d", card.values[1]+oldGameScore, game.score)
+	if cards[0].values[1]+oldGameScore != game.PlayerScore {
+		t.Errorf("Expected score to be %d, got %d", cards[0].values[1]+oldGameScore, game.PlayerScore)
 	}
 }
 
@@ -50,15 +50,15 @@ func TestHit(t *testing.T) {
 // And my score is evaluated
 func TestStand(t *testing.T) {
 	game := NewGame()
-	oldPlayerDeckLen := len(game.playerDeck)
+	oldPlayerDeckLen := len(game.PlayerDeck)
 
 	game.Stand()
 
-	if len(game.playerDeck) != oldPlayerDeckLen {
-		t.Errorf("Expected player deck length to be %d, got %d", oldPlayerDeckLen, len(game.playerDeck))
+	if len(game.PlayerDeck) != oldPlayerDeckLen {
+		t.Errorf("Expected player deck length to be %d, got %d", oldPlayerDeckLen, len(game.PlayerDeck))
 	}
 
-	if !game.complete {
+	if !game.Complete {
 		t.Errorf("Expected game to be complete, but it's incomplete")
 	}
 }
@@ -69,15 +69,15 @@ func TestStand(t *testing.T) {
 func TestUpdateScoreUnder21(t *testing.T) {
 	game := NewGame()
 
-	game.playerDeck = []Card{Card{"Ace", []int{1, 11}}, Card{"10", []int{10}}}
+	game.PlayerDeck = []Card{Card{"Ace", []int{1, 11}}, Card{"10", []int{10}}}
 
-	game.UpdatePlayerScore()
+	game.updatePlayerScore()
 
-	if game.score != 21 {
-		t.Errorf("Expected score to be 21, got %d", game.score)
+	if game.PlayerScore != 21 {
+		t.Errorf("Expected score to be 21, got %d", game.PlayerScore)
 	}
 
-	if game.bust {
+	if game.PlayerBust {
 		t.Errorf("Expected game to still be active, but it's bust")
 	}
 }
@@ -88,15 +88,15 @@ func TestUpdateScoreUnder21(t *testing.T) {
 func TestUpdateScoreOver21(t *testing.T) {
 	game := NewGame()
 
-	game.playerDeck = []Card{Card{"Ace", []int{1, 11}}, Card{"10", []int{10}}, Card{"2", []int{2}}}
+	game.PlayerDeck = []Card{Card{"Ace", []int{1, 11}}, Card{"10", []int{10}}, Card{"2", []int{2}}}
 
-	game.UpdatePlayerScore()
+	game.updatePlayerScore()
 
-	if game.score != 23 {
-		t.Errorf("Expected score to be 23, got %d", game.score)
+	if game.PlayerScore != 23 {
+		t.Errorf("Expected score to be 23, got %d", game.PlayerScore)
 	}
 
-	if !game.bust {
+	if !game.PlayerBust {
 		t.Errorf("Expected game to be bust, but it's still active")
 	}
 }
@@ -107,12 +107,12 @@ func TestUpdateScoreOver21(t *testing.T) {
 func TestKingAceEquals21Score(t *testing.T) {
 	game := NewGame()
 
-	game.playerDeck = []Card{Card{"King", []int{10}}, Card{"Ace", []int{1, 11}}}
+	game.PlayerDeck = []Card{Card{"King", []int{10}}, Card{"Ace", []int{1, 11}}}
 
-	game.UpdatePlayerScore()
+	game.updatePlayerScore()
 
-	if game.score != 21 {
-		t.Errorf("Expected score to be 21, got %d", game.score)
+	if game.PlayerScore != 21 {
+		t.Errorf("Expected score to be 21, got %d", game.PlayerScore)
 	}
 }
 
@@ -122,12 +122,12 @@ func TestKingAceEquals21Score(t *testing.T) {
 func TestKingQueenAceEquals21Score(t *testing.T) {
 	game := NewGame()
 
-	game.playerDeck = []Card{Card{"King", []int{10}}, Card{"Queen", []int{10}}, Card{"Ace", []int{1, 11}}}
+	game.PlayerDeck = []Card{Card{"King", []int{10}}, Card{"Queen", []int{10}}, Card{"Ace", []int{1, 11}}}
 
-	game.UpdatePlayerScore()
+	game.updatePlayerScore()
 
-	if game.score != 21 {
-		t.Errorf("Expected score to be 21, got %d", game.score)
+	if game.PlayerScore != 21 {
+		t.Errorf("Expected score to be 21, got %d", game.PlayerScore)
 	}
 }
 
@@ -137,11 +137,11 @@ func TestKingQueenAceEquals21Score(t *testing.T) {
 func TestNineAceAceEquals21Score(t *testing.T) {
 	game := NewGame()
 
-	game.playerDeck = []Card{Card{"9", []int{9}}, Card{"Ace", []int{1, 11}}, Card{"Ace", []int{1, 11}}}
+	game.PlayerDeck = []Card{Card{"9", []int{9}}, Card{"Ace", []int{1, 11}}, Card{"Ace", []int{1, 11}}}
 
-	game.UpdatePlayerScore()
+	game.updatePlayerScore()
 
-	if game.score != 21 {
-		t.Errorf("Expected score to be 21, got %d", game.score)
+	if game.PlayerScore != 21 {
+		t.Errorf("Expected score to be 21, got %d", game.PlayerScore)
 	}
 }
