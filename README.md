@@ -1,5 +1,5 @@
 # tom-coward/blackjack
-This is a straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in Go using the Cobra CLI framework.
+This is a straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in Go as a CLI app.
 
 ## Assumptions
 - The game is a single player vs. the house
