@@ -1,5 +1,5 @@
 # tom-coward/blackjack
-This is a straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in Go.
+A straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in Go.
 
 ## Assumptions
 - The game is one player vs. the house (dealer)
