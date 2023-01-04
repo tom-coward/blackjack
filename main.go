@@ -48,4 +48,6 @@ func main() {
 	if game.PlayerWon {
 		fmt.Printf("You won! Your final score was %d vs. the house (dealer)'s score of %d", game.PlayerScore, game.HouseScore)
 	}
+
+	os.Exit(1)
 }
