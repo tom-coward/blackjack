@@ -18,22 +18,43 @@ func main() {
 
 	game.DealOpeningHands()
 
-	for !game.Complete {
-		fmt.Print("Your current hand is: \n")
+	for !game.Complete && game.PlayerScore < 21 {
+		fmt.Print("\nYour current hand is: \n")
 		for _, card := range game.PlayerDeck {
-			fmt.Printf("%s", card.Identifier)
+			fmt.Printf("- %s\n", card.Identifier)
 		}
 
-		fmt.Printf("\nYour current score is %d. Would you like to hit or stand? (\"H\" or \"S\")", game.PlayerScore)
-		var playerChoice string
-		fmt.Scan(&playerChoice)
+		fmt.Printf("\nThe dealer's revealed card is %s - they also have one more hidden card\n", game.HouseDeck[0].Identifier)
 
-		switch playerChoice {
-		case "H":
-			game.DealToPlayer(1)
-		case "S":
-			game.Stand()
+		for true {
+			fmt.Printf("\nYour current score is %d. Would you like to hit or stand? (\"H\" or \"S\"): ", game.PlayerScore)
+			var playerChoice string
+			fmt.Scan(&playerChoice)
+
+			switch playerChoice {
+			case "H":
+				game.DealToPlayer(1)
+
+				break // escape from input loop
+			case "S":
+				fmt.Printf("\nThe dealer's second card is %s", game.HouseDeck[1].Identifier)
+				game.Stand()
+
+				break // escape from input loop
+			default:
+				fmt.Println("\nYour input was invalid - please try again by entering \"H\" to hit or \"S\" to stand: ")
+			}
 		}
+	}
+
+	fmt.Print("\nYour final hand is: \n")
+	for _, card := range game.PlayerDeck {
+		fmt.Printf("- %s\n", card.Identifier)
+	}
+
+	fmt.Print("\nThe dealer's final hand is: \n")
+	for _, card := range game.HouseDeck {
+		fmt.Printf("- %s\n", card.Identifier)
 	}
 
 	if game.PlayerBust {

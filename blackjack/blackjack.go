@@ -13,7 +13,7 @@ import (
 
 type Game struct {
 	deck        []Card
-	houseDeck   []Card
+	HouseDeck   []Card
 	PlayerDeck  []Card
 	HouseScore  int
 	PlayerScore int
@@ -30,10 +30,10 @@ type Card struct {
 }
 
 var freshDeck []Card = []Card{
-	Card{"Ace of Hearts", []int{1, 11}}, Card{"2 of Hearts", []int{2}}, Card{"3 of Hearts", []int{3}}, Card{"4 of Hearts", []int{4}}, Card{"5 of Hearts", []int{1}}, Card{"6 of Hearts", []int{6}}, Card{"7 of Hearts", []int{7}}, Card{"8 of Hearts", []int{8}}, Card{"9 of Hearts", []int{9}}, Card{"10 of Hearts", []int{10}}, Card{"Jack of Hearts", []int{10}}, Card{"Queen of Hearts", []int{10}}, Card{"King of Hearts", []int{10}},
-	Card{"Ace of Diamonds", []int{1, 11}}, Card{"2 of Diamonds", []int{2}}, Card{"3 of Diamonds", []int{3}}, Card{"4 of Diamonds", []int{4}}, Card{"5 of Diamonds", []int{1}}, Card{"6 of Diamonds", []int{6}}, Card{"7 of Diamonds", []int{7}}, Card{"8 of Diamonds", []int{8}}, Card{"9 of Diamonds", []int{9}}, Card{"10 of Diamonds", []int{10}}, Card{"Jack of Diamonds", []int{10}}, Card{"Queen of Diamonds", []int{10}}, Card{"King of Diamonds", []int{10}},
-	Card{"Ace of Clubs", []int{1, 11}}, Card{"2 of Clubs", []int{2}}, Card{"3 of Clubs", []int{3}}, Card{"4 of Clubs", []int{4}}, Card{"5 of Clubs", []int{1}}, Card{"6 of Clubs", []int{6}}, Card{"7 of Clubs", []int{7}}, Card{"8 of Clubs", []int{8}}, Card{"9 of Clubs", []int{9}}, Card{"10 of Clubs", []int{10}}, Card{"Jack of Clubs", []int{10}}, Card{"Queen of Clubs", []int{10}}, Card{"King of Clubs", []int{10}},
-	Card{"Ace of Spades", []int{1, 11}}, Card{"2 of Spades", []int{2}}, Card{"3 of Spades", []int{3}}, Card{"4 of Spades", []int{4}}, Card{"5 of Spades", []int{1}}, Card{"6 of Spades", []int{6}}, Card{"7 of Spades", []int{7}}, Card{"8 of Spades", []int{8}}, Card{"9 of Spades", []int{9}}, Card{"10 of Spades", []int{10}}, Card{"Jack of Spades", []int{10}}, Card{"Queen of Spades", []int{10}}, Card{"King of Spades", []int{10}}}
+	{"Ace of Hearts", []int{1, 11}}, {"2 of Hearts", []int{2}}, {"3 of Hearts", []int{3}}, {"4 of Hearts", []int{4}}, {"5 of Hearts", []int{1}}, {"6 of Hearts", []int{6}}, {"7 of Hearts", []int{7}}, {"8 of Hearts", []int{8}}, {"9 of Hearts", []int{9}}, {"10 of Hearts", []int{10}}, {"Jack of Hearts", []int{10}}, {"Queen of Hearts", []int{10}}, {"King of Hearts", []int{10}},
+	{"Ace of Diamonds", []int{1, 11}}, {"2 of Diamonds", []int{2}}, {"3 of Diamonds", []int{3}}, {"4 of Diamonds", []int{4}}, {"5 of Diamonds", []int{1}}, {"6 of Diamonds", []int{6}}, {"7 of Diamonds", []int{7}}, {"8 of Diamonds", []int{8}}, {"9 of Diamonds", []int{9}}, {"10 of Diamonds", []int{10}}, {"Jack of Diamonds", []int{10}}, {"Queen of Diamonds", []int{10}}, {"King of Diamonds", []int{10}},
+	{"Ace of Clubs", []int{1, 11}}, {"2 of Clubs", []int{2}}, {"3 of Clubs", []int{3}}, {"4 of Clubs", []int{4}}, {"5 of Clubs", []int{1}}, {"6 of Clubs", []int{6}}, {"7 of Clubs", []int{7}}, {"8 of Clubs", []int{8}}, {"9 of Clubs", []int{9}}, {"10 of Clubs", []int{10}}, {"Jack of Clubs", []int{10}}, {"Queen of Clubs", []int{10}}, {"King of Clubs", []int{10}},
+	{"Ace of Spades", []int{1, 11}}, {"2 of Spades", []int{2}}, {"3 of Spades", []int{3}}, {"4 of Spades", []int{4}}, {"5 of Spades", []int{1}}, {"6 of Spades", []int{6}}, {"7 of Spades", []int{7}}, {"8 of Spades", []int{8}}, {"9 of Spades", []int{9}}, {"10 of Spades", []int{10}}, {"Jack of Spades", []int{10}}, {"Queen of Spades", []int{10}}, {"King of Spades", []int{10}}}
 
 // Initialise the game
 // RETURNS an instance of the game
@@ -47,6 +47,7 @@ func NewGame() *Game {
 
 // Setup deck (add 52 (4*13) cards; an ace, 2-10, jack, queen, king for each suit)
 func (game *Game) setupDecks() {
+	game.deck = make([]Card, len(freshDeck))
 	copy(game.deck, freshDeck)
 
 	// randomly shuffle order of cards in the deck
@@ -77,7 +78,7 @@ func (game *Game) DealToPlayer(quantity int) ([]Card, error) {
 		return nil, errors.New("Game is complete")
 	}
 
-	selectedCards := game.deck[:quantity-1]
+	selectedCards := game.deck[:quantity]
 
 	game.PlayerDeck = append(game.PlayerDeck, selectedCards...)
 
@@ -96,9 +97,9 @@ func (game *Game) DealToHouse(quantity int) ([]Card, error) {
 		return nil, errors.New("Game is complete")
 	}
 
-	selectedCards := game.deck[:quantity-1]
+	selectedCards := game.deck[:quantity]
 
-	game.houseDeck = append(game.houseDeck, selectedCards...)
+	game.HouseDeck = append(game.HouseDeck, selectedCards...)
 
 	game.deck = game.deck[quantity:]
 
@@ -110,7 +111,7 @@ func (game *Game) DealToHouse(quantity int) ([]Card, error) {
 // Update the house's current score (optimum total of all card values)
 func (game *Game) updateHouseScore() {
 	game.HouseScore = 0
-	for _, card := range game.houseDeck {
+	for _, card := range game.HouseDeck {
 		bestValue := card.values[0]
 		for _, value := range card.values {
 			if game.HouseScore+value > bestValue && game.HouseScore+value <= 21 {

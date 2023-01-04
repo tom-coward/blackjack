@@ -20,12 +20,12 @@ func TestDealOpeningHands(t *testing.T) {
 		t.Errorf("Expected 2 cards in player deck, got %d", len(game.PlayerDeck))
 	}
 
-	if len(game.houseDeck) != 2 {
+	if len(game.HouseDeck) != 2 {
 		t.Errorf("Expected 2 cards in house deck, got %d", len(game.PlayerDeck))
 	}
 
-	if len(game.deck) != 50 {
-		t.Errorf("Expected 50 cards remaining in main deck, got %d", len(game.deck))
+	if len(game.deck) != 48 {
+		t.Errorf("Expected 48 cards remaining in main deck, got %d", len(game.deck))
 	}
 }
 
@@ -39,8 +39,8 @@ func TestHit(t *testing.T) {
 
 	cards, _ := game.DealToPlayer(1)
 
-	if cards[0].values[1]+oldGameScore != game.PlayerScore {
-		t.Errorf("Expected score to be %d, got %d", cards[0].values[1]+oldGameScore, game.PlayerScore)
+	if cards[0].values[0]+oldGameScore != game.PlayerScore {
+		t.Errorf("Expected score to be %d, got %d", cards[0].values[0]+oldGameScore, game.PlayerScore)
 	}
 }
 
@@ -69,7 +69,7 @@ func TestStand(t *testing.T) {
 func TestUpdateScoreUnder21(t *testing.T) {
 	game := NewGame()
 
-	game.PlayerDeck = []Card{Card{"Ace", []int{1, 11}}, Card{"10", []int{10}}}
+	game.PlayerDeck = []Card{{"Ace", []int{1, 11}}, {"10", []int{10}}}
 
 	game.updatePlayerScore()
 
@@ -88,7 +88,7 @@ func TestUpdateScoreUnder21(t *testing.T) {
 func TestUpdateScoreOver21(t *testing.T) {
 	game := NewGame()
 
-	game.PlayerDeck = []Card{Card{"Ace", []int{1, 11}}, Card{"10", []int{10}}, Card{"2", []int{2}}}
+	game.PlayerDeck = []Card{{"Ace", []int{1, 11}}, {"10", []int{10}}, {"2", []int{2}}}
 
 	game.updatePlayerScore()
 
@@ -107,7 +107,7 @@ func TestUpdateScoreOver21(t *testing.T) {
 func TestKingAceEquals21Score(t *testing.T) {
 	game := NewGame()
 
-	game.PlayerDeck = []Card{Card{"King", []int{10}}, Card{"Ace", []int{1, 11}}}
+	game.PlayerDeck = []Card{{"King", []int{10}}, {"Ace", []int{1, 11}}}
 
 	game.updatePlayerScore()
 
@@ -122,7 +122,7 @@ func TestKingAceEquals21Score(t *testing.T) {
 func TestKingQueenAceEquals21Score(t *testing.T) {
 	game := NewGame()
 
-	game.PlayerDeck = []Card{Card{"King", []int{10}}, Card{"Queen", []int{10}}, Card{"Ace", []int{1, 11}}}
+	game.PlayerDeck = []Card{{"King", []int{10}}, {"Queen", []int{10}}, {"Ace", []int{1, 11}}}
 
 	game.updatePlayerScore()
 
@@ -137,7 +137,7 @@ func TestKingQueenAceEquals21Score(t *testing.T) {
 func TestNineAceAceEquals21Score(t *testing.T) {
 	game := NewGame()
 
-	game.PlayerDeck = []Card{Card{"9", []int{9}}, Card{"Ace", []int{1, 11}}, Card{"Ace", []int{1, 11}}}
+	game.PlayerDeck = []Card{{"9", []int{9}}, {"Ace", []int{1, 11}}, {"Ace", []int{1, 11}}}
 
 	game.updatePlayerScore()
 
