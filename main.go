@@ -23,8 +23,7 @@ func main() {
 	}
 
 	for !game.Complete && game.PlayerScore < 21 {
-		fmt.Println("----------------------------------------")
-		fmt.Print("Your current hand is: \n")
+		fmt.Println("\nYour current hand is:")
 		for _, card := range game.PlayerDeck {
 			fmt.Printf("- %s\n", card.Identifier)
 		}
@@ -58,12 +57,12 @@ func main() {
 		}
 	}
 
-	fmt.Println("Your final hand is:")
+	fmt.Println("\nYour final hand is:")
 	for _, card := range game.PlayerDeck {
 		fmt.Printf("- %s\n", card.Identifier)
 	}
 
-	fmt.Println("The dealer's final hand is:")
+	fmt.Println("\nThe dealer's final hand is:")
 	for _, card := range game.HouseDeck {
 		fmt.Printf("- %s\n", card.Identifier)
 	}
@@ -74,12 +73,20 @@ func main() {
 	}
 
 	if game.HouseBust {
-		fmt.Printf("The house is bust! The dealer's score exceeded 21 at %d", game.HouseScore)
+		fmt.Printf("The house is bust, so you won! The dealer's score exceeded 21 at %d", game.HouseScore)
+		os.Exit(1)
 	}
 
 	if game.PlayerWon {
 		fmt.Printf("You won! Your final score was %d vs. the house (dealer)'s score of %d", game.PlayerScore, game.HouseScore)
+		os.Exit(1)
 	}
 
+	if game.Draw {
+		fmt.Printf("You drew! You and the dealer's both had a final score of %d", game.PlayerScore)
+		os.Exit(1)
+	}
+
+	fmt.Printf("You lost! Your final score was %d vs. the house (dealer)'s score of %d", game.PlayerScore, game.HouseScore)
 	os.Exit(1)
 }

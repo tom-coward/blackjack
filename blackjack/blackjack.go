@@ -23,6 +23,7 @@ type Game struct {
 	HouseBust   bool
 	PlayerBust  bool
 	PlayerWon   bool
+	Draw        bool
 }
 
 type Card struct {
@@ -168,6 +169,8 @@ func (game *Game) Stand() error {
 
 	if game.PlayerScore > game.HouseScore {
 		game.PlayerWon = true
+	} else if game.PlayerScore == game.HouseScore {
+		game.Draw = true
 	}
 
 	return nil
