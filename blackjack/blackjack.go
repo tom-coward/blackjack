@@ -9,6 +9,7 @@ package blackjack
 import (
 	"errors"
 	"math/rand"
+	"time"
 )
 
 type Game struct {
@@ -38,6 +39,8 @@ var freshDeck []Card = []Card{
 // Initialise the game
 // RETURNS an instance of the game
 func NewGame() *Game {
+	rand.Seed(time.Now().UnixNano()) // re-seed rand library to avoid repeated card shuffle
+
 	game := new(Game)
 
 	game.setupDecks()
@@ -143,8 +146,13 @@ func (game *Game) updatePlayerScore() {
 	}
 
 	if game.PlayerScore > 21 { // player is bust
-		game.Complete = true
 		game.PlayerBust = true
+		game.Complete = true
+	}
+
+	if game.PlayerScore == 21 { // player has won
+		game.PlayerWon = true
+		game.Complete = true
 	}
 }
 
