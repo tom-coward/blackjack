@@ -13,7 +13,7 @@ The project follows a domain-driven design, meaning that all of the business log
 
 The CLI user interface is provided in [`main.go`](main.go), calling logic from the *blackjack* package. An instance of the `Game` type is grabbed from `blackjack.NewGame()` - this type stores all of the game's state (decks, scores etc.) and all gameplay functionality derives from it.
 
-Test-driven development (TDD), meaning failing unit tests are written before any logic being tested is written, was also followed throughout the project's development to ensure that all business rules (i.e. the game rules) are followed and all acceptance criteria is met.
+Test-driven development (TDD), meaning failing unit tests are written before any logic being tested is written, was also followed throughout the project's development to ensure that all business rules (i.e. the game rules) are followed and all acceptance criteria is met. All tests in [`blackjack_test.go`](blackjack/blackjack_test.go) can be ran using `go test` in the `./blackjack` directory.
 
 ## Prerequisites
 You need to have Go installed (ideally v1.19.x): https://go.dev/doc/install
