@@ -39,7 +39,15 @@ func TestHit(t *testing.T) {
 
 	cards, _ := game.DealToPlayer(1)
 
-	if cards[0].values[0]+oldGameScore != game.PlayerScore {
+	// try each possible card value to check if score is updated
+	scoreValidated := false
+	for _, value := range cards[0].values {
+		if value+oldGameScore == game.PlayerScore {
+			scoreValidated = true
+		}
+	}
+
+	if !scoreValidated {
 		t.Errorf("Expected score to be %d, got %d", cards[0].values[0]+oldGameScore, game.PlayerScore)
 	}
 }
