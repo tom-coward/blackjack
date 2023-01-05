@@ -8,6 +8,9 @@ A straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in
 - There are four instances of each card in the main deck at the beginning of the game (one for each suit)
 - As a card is dealt to either the player or dealer, it is simultaneously removed from the main deck so it cannot be dealt again
 
+## Prerequisites
+You need to have Go installed (ideally v1.19.x): https://go.dev/doc/install
+
 ## Gameplay
 **To play a round of the game, simply run `go run .` from the root directory.**
 
