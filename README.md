@@ -9,7 +9,7 @@ A straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in
 - As a card is dealt to either the player or dealer, it is simultaneously removed from the main deck so it cannot be dealt again
 
 ## Project structure
-The project follows a domain-driven design, meaning that all of the business logic is encapsulated into small functions, each with a single purpose, within [the *blackjack* package (`blackjack/blackjack.go`)](/blackjack/blackjack.go). This provides highly reusable code and small units which can easily be unit tested ([see `blackjack_test.go`](blackjack/blackjack_test.go)).
+All of the business logic is encapsulated into small functions, each with a single purpose, all within [the *blackjack* package (`blackjack/blackjack.go`)](/blackjack/blackjack.go). This provides highly reusable code and small units which can easily be unit tested ([see `blackjack_test.go`](blackjack/blackjack_test.go)).
 
 The CLI user interface is provided in [`main.go`](main.go), calling logic from the *blackjack* package. An instance of the `Game` type is grabbed from `blackjack.NewGame()` - this type stores all of the game's state (decks, scores etc.) and all gameplay functionality derives from it.
 
