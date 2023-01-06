@@ -5,7 +5,7 @@ A straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in
 - The game is one player vs. the house (dealer)
 - The dealer (house) draws two cards at the opening hand (as does the player) - then once the player has decided to Stand, they will draw more cards until the score is >= 17
 - A score for the player or house > 21 means that they're bust, and the game is over (won by the opposing player to whoever is bust)
-- There are four instances of each card in the main deck at the beginning of the game (one for each suit)
+- There are four instances of each card in the main deck at the beginning of the game (one for each suit), meaning there are 52 cards in total
 - As a card is dealt to either the player or dealer, it is simultaneously removed from the main deck so it cannot be dealt again
 
 ## Project structure
