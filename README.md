@@ -8,6 +8,7 @@ A straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in
 - There are four instances of each card in the main deck at the beginning of the game (one for each suit), meaning there are 52 cards in total
 - As a card is dealt to either the player or dealer, it is simultaneously removed from the main deck so it cannot be dealt again
 - If an ace is dealt (which can have a value of 1 or 11), the game automatically determines its value based on which is optimum
+- If a player gets a score of 21, they instantly win the game
 
 ## Project structure
 All of the business logic is encapsulated into small functions, each with a single purpose, all within [the *blackjack* package (`blackjack/blackjack.go`)](/blackjack/blackjack.go). This provides highly reusable code and small units which can easily be unit tested ([see `blackjack_test.go`](blackjack/blackjack_test.go)).
