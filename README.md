@@ -7,6 +7,7 @@ A straightforward Blackjack (otherwise known as Twenty-One) CLI game, written in
 - A score for the player or house > 21 means that they're bust, and the game is over (won by the opposing player to whoever is bust)
 - There are four instances of each card in the main deck at the beginning of the game (one for each suit)
 - As a card is dealt to either the player or dealer, it is simultaneously removed from the main deck so it cannot be dealt again
+- If an ace is dealt (which can have a value of 1 or 11), the game automatically determines its value based on which is optimum
 
 ## Gameplay
 **To play a round of the game, simply run `go run .` from the root directory.**
