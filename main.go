@@ -43,7 +43,7 @@ func main() {
 				os.Exit(-1)
 			}
 
-			fmt.Printf("\nYou were dealt a %s", cards[0].Identifier)
+			fmt.Printf("\nYou were dealt a %s\n", cards[0].Identifier)
 		case "S":
 			fmt.Printf("\nThe dealer's second card is %s", game.HouseDeck[1].Identifier)
 			err := game.Stand()
@@ -68,22 +68,22 @@ func main() {
 	}
 
 	if game.PlayerBust {
-		fmt.Printf("You're bust! Your score exceeded 21 at %d", game.PlayerScore)
+		fmt.Printf("\nYou're bust! Your score exceeded 21 at %d", game.PlayerScore)
 		os.Exit(1)
 	}
 
 	if game.HouseBust {
-		fmt.Printf("The house is bust, so you won! The dealer's score exceeded 21 at %d", game.HouseScore)
+		fmt.Printf("\nThe house is bust, so you won! The dealer's score exceeded 21 at %d", game.HouseScore)
 		os.Exit(1)
 	}
 
 	if game.PlayerWon {
-		fmt.Printf("You won! Your final score was %d vs. the house (dealer)'s score of %d", game.PlayerScore, game.HouseScore)
+		fmt.Printf("\nYou won! Your final score was %d vs. the house (dealer)'s score of %d", game.PlayerScore, game.HouseScore)
 		os.Exit(1)
 	}
 
 	if game.Draw {
-		fmt.Printf("You drew! You and the dealer's both had a final score of %d", game.PlayerScore)
+		fmt.Printf("\nYou drew! You and the dealer's both had a final score of %d", game.PlayerScore)
 		os.Exit(1)
 	}
 

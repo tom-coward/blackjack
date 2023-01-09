@@ -10,7 +10,8 @@ import "testing"
 
 // Given I play a game of blackjack
 // When I am dealt my opening hand
-// Then I have two cards
+// Then I have two cards, and the house has two cards
+// And the main deck is updated
 func TestDealOpeningHands(t *testing.T) {
 	game := NewGame()
 
@@ -21,7 +22,7 @@ func TestDealOpeningHands(t *testing.T) {
 	}
 
 	if len(game.HouseDeck) != 2 {
-		t.Errorf("Expected 2 cards in house deck, got %d", len(game.PlayerDeck))
+		t.Errorf("Expected 2 cards in house deck, got %d", len(game.HouseDeck))
 	}
 
 	if len(game.deck) != 48 {
@@ -73,20 +74,20 @@ func TestStand(t *testing.T) {
 
 // Given my score is updated or evaluated
 // When it is 21 or less
-// Then I have a valid hand
+// Then I have a valid hand (not bust & game is still active)
 func TestUpdateScoreUnder21(t *testing.T) {
 	game := NewGame()
 
-	game.PlayerDeck = []Card{{"Ace", []int{1, 11}}, {"10", []int{10}}}
+	game.PlayerDeck = []Card{{"5", []int{5}}, {"10", []int{10}}}
 
-	game.updatePlayerScore()
-
-	if game.PlayerScore != 21 {
-		t.Errorf("Expected score to be 21, got %d", game.PlayerScore)
-	}
+	game.updatePlayerScore() // score should be 15
 
 	if game.PlayerBust {
-		t.Errorf("Expected game to still be active, but it's bust")
+		t.Errorf("Expected player to have valid hand, but they're bust")
+	}
+
+	if game.Complete {
+		t.Errorf("Expected game to still be active, but it's complete")
 	}
 }
 
@@ -96,12 +97,12 @@ func TestUpdateScoreUnder21(t *testing.T) {
 func TestUpdateScoreOver21(t *testing.T) {
 	game := NewGame()
 
-	game.PlayerDeck = []Card{{"Ace", []int{1, 11}}, {"10", []int{10}}, {"2", []int{2}}}
+	game.PlayerDeck = []Card{{"10", []int{10}}, {"10", []int{10}}, {"2", []int{2}}}
 
-	game.updatePlayerScore()
+	game.updatePlayerScore() // score should be 22
 
-	if game.PlayerScore != 23 {
-		t.Errorf("Expected score to be 23, got %d", game.PlayerScore)
+	if game.PlayerScore != 22 {
+		t.Errorf("Expected score to be 22, got %d", game.PlayerScore)
 	}
 
 	if !game.PlayerBust {
@@ -117,7 +118,7 @@ func TestKingAceEquals21Score(t *testing.T) {
 
 	game.PlayerDeck = []Card{{"King", []int{10}}, {"Ace", []int{1, 11}}}
 
-	game.updatePlayerScore()
+	game.updatePlayerScore() // score should be 21 (also testing correct ace value is chosen)
 
 	if game.PlayerScore != 21 {
 		t.Errorf("Expected score to be 21, got %d", game.PlayerScore)
@@ -132,7 +133,7 @@ func TestKingQueenAceEquals21Score(t *testing.T) {
 
 	game.PlayerDeck = []Card{{"King", []int{10}}, {"Queen", []int{10}}, {"Ace", []int{1, 11}}}
 
-	game.updatePlayerScore()
+	game.updatePlayerScore() // score should be 21 (also testing correct ace value is chosen)
 
 	if game.PlayerScore != 21 {
 		t.Errorf("Expected score to be 21, got %d", game.PlayerScore)
@@ -147,7 +148,7 @@ func TestNineAceAceEquals21Score(t *testing.T) {
 
 	game.PlayerDeck = []Card{{"9", []int{9}}, {"Ace", []int{1, 11}}, {"Ace", []int{1, 11}}}
 
-	game.updatePlayerScore()
+	game.updatePlayerScore() // score should be  21 (also testing correct ace values are chosen)
 
 	if game.PlayerScore != 21 {
 		t.Errorf("Expected score to be 21, got %d", game.PlayerScore)

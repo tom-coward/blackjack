@@ -32,10 +32,10 @@ type Card struct {
 }
 
 var freshDeck []Card = []Card{
-	{"Ace of Hearts", []int{1, 11}}, {"2 of Hearts", []int{2}}, {"3 of Hearts", []int{3}}, {"4 of Hearts", []int{4}}, {"5 of Hearts", []int{1}}, {"6 of Hearts", []int{6}}, {"7 of Hearts", []int{7}}, {"8 of Hearts", []int{8}}, {"9 of Hearts", []int{9}}, {"10 of Hearts", []int{10}}, {"Jack of Hearts", []int{10}}, {"Queen of Hearts", []int{10}}, {"King of Hearts", []int{10}},
-	{"Ace of Diamonds", []int{1, 11}}, {"2 of Diamonds", []int{2}}, {"3 of Diamonds", []int{3}}, {"4 of Diamonds", []int{4}}, {"5 of Diamonds", []int{1}}, {"6 of Diamonds", []int{6}}, {"7 of Diamonds", []int{7}}, {"8 of Diamonds", []int{8}}, {"9 of Diamonds", []int{9}}, {"10 of Diamonds", []int{10}}, {"Jack of Diamonds", []int{10}}, {"Queen of Diamonds", []int{10}}, {"King of Diamonds", []int{10}},
-	{"Ace of Clubs", []int{1, 11}}, {"2 of Clubs", []int{2}}, {"3 of Clubs", []int{3}}, {"4 of Clubs", []int{4}}, {"5 of Clubs", []int{1}}, {"6 of Clubs", []int{6}}, {"7 of Clubs", []int{7}}, {"8 of Clubs", []int{8}}, {"9 of Clubs", []int{9}}, {"10 of Clubs", []int{10}}, {"Jack of Clubs", []int{10}}, {"Queen of Clubs", []int{10}}, {"King of Clubs", []int{10}},
-	{"Ace of Spades", []int{1, 11}}, {"2 of Spades", []int{2}}, {"3 of Spades", []int{3}}, {"4 of Spades", []int{4}}, {"5 of Spades", []int{1}}, {"6 of Spades", []int{6}}, {"7 of Spades", []int{7}}, {"8 of Spades", []int{8}}, {"9 of Spades", []int{9}}, {"10 of Spades", []int{10}}, {"Jack of Spades", []int{10}}, {"Queen of Spades", []int{10}}, {"King of Spades", []int{10}}}
+	{"Ace of Hearts", []int{1, 11}}, {"2 of Hearts", []int{2}}, {"3 of Hearts", []int{3}}, {"4 of Hearts", []int{4}}, {"5 of Hearts", []int{5}}, {"6 of Hearts", []int{6}}, {"7 of Hearts", []int{7}}, {"8 of Hearts", []int{8}}, {"9 of Hearts", []int{9}}, {"10 of Hearts", []int{10}}, {"Jack of Hearts", []int{10}}, {"Queen of Hearts", []int{10}}, {"King of Hearts", []int{10}},
+	{"Ace of Diamonds", []int{1, 11}}, {"2 of Diamonds", []int{2}}, {"3 of Diamonds", []int{3}}, {"4 of Diamonds", []int{4}}, {"5 of Diamonds", []int{5}}, {"6 of Diamonds", []int{6}}, {"7 of Diamonds", []int{7}}, {"8 of Diamonds", []int{8}}, {"9 of Diamonds", []int{9}}, {"10 of Diamonds", []int{10}}, {"Jack of Diamonds", []int{10}}, {"Queen of Diamonds", []int{10}}, {"King of Diamonds", []int{10}},
+	{"Ace of Clubs", []int{1, 11}}, {"2 of Clubs", []int{2}}, {"3 of Clubs", []int{3}}, {"4 of Clubs", []int{4}}, {"5 of Clubs", []int{5}}, {"6 of Clubs", []int{6}}, {"7 of Clubs", []int{7}}, {"8 of Clubs", []int{8}}, {"9 of Clubs", []int{9}}, {"10 of Clubs", []int{10}}, {"Jack of Clubs", []int{10}}, {"Queen of Clubs", []int{10}}, {"King of Clubs", []int{10}},
+	{"Ace of Spades", []int{1, 11}}, {"2 of Spades", []int{2}}, {"3 of Spades", []int{3}}, {"4 of Spades", []int{4}}, {"5 of Spades", []int{5}}, {"6 of Spades", []int{6}}, {"7 of Spades", []int{7}}, {"8 of Spades", []int{8}}, {"9 of Spades", []int{9}}, {"10 of Spades", []int{10}}, {"Jack of Spades", []int{10}}, {"Queen of Spades", []int{10}}, {"King of Spades", []int{10}}}
 
 // Initialise the game
 // RETURNS an instance of the game
@@ -115,10 +115,26 @@ func (game *Game) DealToHouse(quantity int) ([]Card, error) {
 // Update the house's current score (optimum total of all card values)
 func (game *Game) updateHouseScore() {
 	game.HouseScore = 0
+
+	cardsToReview := []Card{}
 	for _, card := range game.HouseDeck {
+		// if card has more than one possible value, mark as needing review once all other cards have been summed
+		if len(card.values) > 1 {
+			cardsToReview = append(cardsToReview, card)
+			continue
+		}
+
+		// else, add card's one possible value to total score
+		game.HouseScore += card.values[0]
+	}
+
+	// review cards that have more than one possible value (if any)
+	for _, card := range cardsToReview {
 		bestValue := card.values[0]
+
+		// TODO: account for possible edge case if there are three or more aces that'll still cause a fail
 		for _, value := range card.values {
-			if game.HouseScore+value > bestValue && game.HouseScore+value <= 21 {
+			if game.HouseScore+value > game.HouseScore+bestValue && game.HouseScore+value <= 21 {
 				bestValue = value
 			}
 		}
@@ -130,15 +146,33 @@ func (game *Game) updateHouseScore() {
 		game.Complete = true
 		game.HouseBust = true
 	}
+
+	// house doesn't instantly win at 21 like player does, as player might have 21 meaning it's a draw
 }
 
 // Update the player's current score (optimum total of all card values)
 func (game *Game) updatePlayerScore() {
 	game.PlayerScore = 0
+
+	cardsToReview := []Card{}
 	for _, card := range game.PlayerDeck {
+		// if card has more than one possible value, mark as needing review once all other cards have been summed
+		if len(card.values) > 1 {
+			cardsToReview = append(cardsToReview, card)
+			continue
+		}
+
+		// else, add card's one possible value to total score
+		game.PlayerScore += card.values[0]
+	}
+
+	// review cards that have more than one possible value (if any)
+	for _, card := range cardsToReview {
 		bestValue := card.values[0]
+
+		// TODO: account for possible edge case if there are three or more aces that'll still cause a fail
 		for _, value := range card.values {
-			if game.PlayerScore+value > bestValue && game.PlayerScore+value <= 21 {
+			if game.PlayerScore+value > game.PlayerScore+bestValue && game.PlayerScore+value <= 21 {
 				bestValue = value
 			}
 		}
@@ -157,7 +191,7 @@ func (game *Game) updatePlayerScore() {
 	}
 }
 
-// Stand player; take no more cards and compare score with dealer
+// Stand player -- take no more cards and compare score with dealer
 func (game *Game) Stand() error {
 	if game.Complete {
 		return errors.New("Game is complete")
