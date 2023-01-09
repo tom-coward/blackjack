@@ -18,7 +18,7 @@ func main() {
 
 	err := game.DealOpeningHands()
 	if err != nil {
-		fmt.Printf("There was an error dealing the opening hand: %s", err.Error())
+		fmt.Printf("\nThere was an error dealing the opening hand: %s", err.Error())
 		os.Exit(-1)
 	}
 
@@ -39,17 +39,17 @@ func main() {
 			cards, err := game.DealToPlayer(1)
 
 			if err != nil {
-				fmt.Printf("There was an error Hitting: %s", err.Error())
+				fmt.Printf("\nThere was an error Hitting: %s", err.Error())
 				os.Exit(-1)
 			}
 
 			fmt.Printf("\nYou were dealt a %s\n", cards[0].Identifier)
 		case "S":
-			fmt.Printf("\nThe dealer's second card is %s", game.HouseDeck[1].Identifier)
+			fmt.Printf("\nThe dealer's second card is %s\n", game.HouseDeck[1].Identifier)
 			err := game.Stand()
 
 			if err != nil {
-				fmt.Printf("There was an error Standing: %s", err.Error())
+				fmt.Printf("\nThere was an error Standing: %s", err.Error())
 				os.Exit(-1)
 			}
 		default:
@@ -87,6 +87,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("You lost! Your final score was %d vs. the house (dealer)'s score of %d", game.PlayerScore, game.HouseScore)
+	fmt.Printf("\nYou lost! Your final score was %d vs. the house (dealer)'s score of %d", game.PlayerScore, game.HouseScore)
 	os.Exit(1)
 }
